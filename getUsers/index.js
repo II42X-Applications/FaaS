@@ -1,10 +1,4 @@
-'use strict';
-console.log('Loading addUser function');
-
-export const handler = async (event) => {
-  let responseCode;
-  let user;
-  let errorMessage = '';
+module.exports = async function (context, req) {
   const data = [
     {
       id: '1',
@@ -147,35 +141,8 @@ export const handler = async (event) => {
       role: 'Advertising',
     },
   ];
-  console.log('request: ' + JSON.stringify(event));
 
-  if (event.body) {
-    let body = JSON.parse(event.body);
-    if (!body.user) {
-      errorMessage = 'No user included in the request.';
-    } else {
-      user = body.user;
-      if (!user.id || !user.firstName || !user.lastName || !user.role || !user.age) {
-        errorMessage = 'Badly formatted user in request.';
-      }
-    }
-  }
-
-  data.push(user);
-
-  let responseBody;
-  errorMessage
-    ? (responseBody = { message: errorMessage, input: event })
-    : (responseBody = { user: user, input: event });
-
-  errorMessage ? (responseCode = 400) : (responseCode = 201);
-  let response = {
-    statusCode: responseCode,
-    headers: {
-      'x-custom-header': 'my custom header value',
-    },
-    body: JSON.stringify(responseBody),
+  context.res = {
+    body: JSON.stringify(data),
   };
-  console.log('response: ' + JSON.stringify(response));
-  return response;
 };
